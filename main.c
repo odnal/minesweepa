@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include <assert.h>
 #include "./raylib/raylib.h"
 
 #define SCREEN_WIDTH    500
@@ -167,6 +168,7 @@ int main()
         ClearBackground(LIGHTGRAY);
 
         Render_Grid();
+        Game_Render();
 
         EndDrawing();
 
