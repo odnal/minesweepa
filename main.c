@@ -82,6 +82,9 @@ void Reveal_Cell(int col, int row)
     // 2. Number (representing a mine in a location adjacent or diagonal to the current cell)
     // 3. Mine == game over
     switch (grid[row][col].kind) {
+        case CELL_BLANK:
+            game_state = STATE_PLAYING;
+            break;
         case CELL_MINE:
             game_state = STATE_GAME_OVER;
             break;
@@ -123,6 +126,8 @@ void Reset_Grid()
     for (int i = 0; i < ROWS; i++) {
         for (int j = 0; j < COLS; j++) {
             grid[i][j].state = UNOPENED;
+            grid[i][j].kind = CELL_BLANK;
+            grid[i][j].nearby_mines = 0;
         }
     }
 
@@ -185,6 +190,11 @@ void Game_Render()
             break;
         case STATE_GAME_OVER:
             //assert(0 && "GAME OVER!! - not implemented yet");
+            // TODO: Display some UI indicators for game over and how to restart the game or go to the main menu
+            if (IsKeyPressed(KEY_SPACE)) {
+                Reset_Grid();
+                game_state = STATE_PLAYING;
+            }
             break;
 
     }
