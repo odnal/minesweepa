@@ -71,9 +71,14 @@ void Reveal_Cell(int col, int row)
 
 void Render_Cell(Cell cell, Vector2 pos, Vector2 size)
 {
-    if (cell.kind == CELL_MINE) {
+    if (cell.state == FLAGGED) {
+        DrawRectangleV(pos, size, GREEN);
+        if (cell.state == UNOPENED)
+            DrawRectangleV(pos, size, GRAY);
+    } else if (cell.kind == CELL_MINE) {
         DrawRectangleV(pos, size, YELLOW);
     }
+
     DrawRectangleLinesEx((Rectangle) { pos.x, pos.y, size.x, size.y }, 1, GRAY);
 }
 
@@ -139,12 +144,14 @@ void Game_Render()
                 const int row = (int) (mouse_pos.y / CELL_HEIGHT);
 
                 if (isCellValid(col, row)) {
-                    if (grid[row][col].state == UNOPENED) {
-                        grid[row][col].state = FLAGGED;
-                        printf("FLAGGED\n");
-                    } else {
-                        grid[row][col].state = UNOPENED;
-                        printf("UNFLAGGED\n");
+                    if (grid[row][col].state != OPENED) {
+                        if (grid[row][col].state == UNOPENED) {
+                            grid[row][col].state = FLAGGED;
+                            printf("FLAGGED\n");
+                        } else {
+                            grid[row][col].state = UNOPENED;
+                            printf("UNFLAGGED\n");
+                        }
                     }
                 }
             }
