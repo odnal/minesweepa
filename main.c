@@ -34,6 +34,7 @@ typedef enum {
 typedef struct { 
     Cell_Kind kind;
     Cell_State state;
+    int nearby_mines;
 } Cell;
 
 Cell grid[ROWS][COLS];
@@ -44,6 +45,24 @@ typedef enum {
 } game_states;
 
 game_states game_state;
+
+int count_mines(int r, int c)
+{
+    int num_mines = 0;
+    for (int i = -1; i < 2; i++) {
+        for (int j = -1; j < 2; j++) {
+            if (i != 0 && j != 0) continue; // skip diags
+            int nrow = r + i;
+            int ncol = c + j;
+            if (nrow >= 0 && nrow < ROWS && ncol >= 0 && ncol < COLS) {
+                if (grid[nrow][ncol].kind == CELL_MINE) {
+                    num_mines++;
+                }
+            }
+        }
+    }
+    return num_mines;
+}
 
 int isCellValid(int col, int row)
 {
@@ -71,27 +90,18 @@ void Reveal_Cell(int col, int row)
 
 void Render_Cell(Cell cell, Vector2 pos, Vector2 size)
 {
-    //if (cell.state == FLAGGED) {
-    //    DrawRectangleV(pos, size, GREEN);
-    //    if (cell.state == UNOPENED)
-    //        DrawRectangleV(pos, size, GRAY);
-    //} else if (cell.kind == CELL_MINE) {
-    //    DrawRectangleV(pos, size, YELLOW);
-    //}
-
     if (cell.state == OPENED) {
         if (cell.kind == CELL_MINE) {
             DrawRectangleV(pos, size, YELLOW);
-        } else {
-            // TODO: implement BLANK cell and potential close mine cell kinds
-            ;
-        }
-
+        } else if (cell.nearby_mines > 0) {
+            // Check if there is a better way to center text within a given cell
+            DrawRectangleV(pos, size, CLITERAL(Color){ 120, 120, 120, 255 }); // balanced gray color i prefer
+            DrawText(TextFormat("%d", cell.nearby_mines), pos.x + 24, pos.y + 18, 24, BLACK);
+        } 
     } else if (cell.state == FLAGGED) {
         DrawRectangleV(pos, size, GREEN);
-        //if (cell.state == UNOPENED) {
-        //    DrawRectangleV(pos, size, GRAY);
-        //}
+    } else if (cell.kind == CELL_MINE) { // DELETE ME at some point
+        DrawRectangleV(pos, size, YELLOW);
     }
 
     DrawRectangleLinesEx((Rectangle) { pos.x, pos.y, size.x, size.y }, 1, GRAY);
@@ -127,8 +137,12 @@ void Reset_Grid()
             num_mines--;
         }
     }
-    // TODO: next
-    // count near mines for the opened cell
+    // count near by mines for the opened cell
+    for (int i = 0; i < ROWS; i++) {
+        for (int j = 0; j < COLS; j++) {
+            grid[i][j].nearby_mines = count_mines(i, j);
+        }
+    }
 }
 
 void Game_Render()
