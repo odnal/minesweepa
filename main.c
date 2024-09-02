@@ -11,17 +11,8 @@
 #define CELL_WIDTH  ((float)SCREEN_WIDTH/COLS)
 #define CELL_HEIGHT ((float)SCREEN_HEIGHT/ROWS)
 
-// maybe use enum for the state of a given cell via how the game is controlled
 typedef enum {
     CELL_BLANK = 0,
-    CELL_ONE,
-    CELL_TWO,
-    CELL_THREE,
-    CELL_FOUR,
-    CELL_FIVE,
-    CELL_SIX,
-    CELL_SEVEN, 
-    CELL_EIGHT,
     CELL_MINE
 } Cell_Kind;
 
@@ -77,10 +68,9 @@ void Reveal_Cell(int col, int row)
 
     grid[row][col].state = OPENED;
 
-    // TODO: implement the cell reveal cases
+    // cell reveal cases
     // 1. Blank (nothing to worry about and at some point should implement all non-mined adjacent cells will be opened)
-    // 2. Number (representing a mine in a location adjacent or diagonal to the current cell)
-    // 3. Mine == game over
+    // 2. Mine == game over
     switch (grid[row][col].kind) {
         case CELL_BLANK:
             game_state = STATE_PLAYING;
@@ -152,12 +142,12 @@ void Reset_Grid()
 
 void Game_Render()
 {
+    // TODO: implement a main menu state that displays a legend of how to play and when to start a game
     switch(game_state) {
         case STATE_PLAYING:
             // API for left click:
             // 1. Blank (nothing to worry about and at some point should implement all non-mined adjacent cells will be opened)
-            // 2. Number (representing a mine in a location adjacent or diagonal to the current cell)
-            // 3. Mine == game over
+            // 2. Mine == game over
             if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT)) {
                 Vector2 mouse_pos = GetMousePosition();
                 const int col = (int) (mouse_pos.x / CELL_WIDTH);
