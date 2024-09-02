@@ -26,7 +26,7 @@ typedef enum {
 } Cell_Kind;
 
 typedef enum {
-    UNOPENED,
+    UNOPENED = 0,
     OPENED,
     FLAGGED
 } Cell_State;
@@ -71,12 +71,27 @@ void Reveal_Cell(int col, int row)
 
 void Render_Cell(Cell cell, Vector2 pos, Vector2 size)
 {
-    if (cell.state == FLAGGED) {
+    //if (cell.state == FLAGGED) {
+    //    DrawRectangleV(pos, size, GREEN);
+    //    if (cell.state == UNOPENED)
+    //        DrawRectangleV(pos, size, GRAY);
+    //} else if (cell.kind == CELL_MINE) {
+    //    DrawRectangleV(pos, size, YELLOW);
+    //}
+
+    if (cell.state == OPENED) {
+        if (cell.kind == CELL_MINE) {
+            DrawRectangleV(pos, size, YELLOW);
+        } else {
+            // TODO: implement BLANK cell and potential close mine cell kinds
+            ;
+        }
+
+    } else if (cell.state == FLAGGED) {
         DrawRectangleV(pos, size, GREEN);
-        if (cell.state == UNOPENED)
-            DrawRectangleV(pos, size, GRAY);
-    } else if (cell.kind == CELL_MINE) {
-        DrawRectangleV(pos, size, YELLOW);
+        //if (cell.state == UNOPENED) {
+        //    DrawRectangleV(pos, size, GRAY);
+        //}
     }
 
     DrawRectangleLinesEx((Rectangle) { pos.x, pos.y, size.x, size.y }, 1, GRAY);
@@ -155,7 +170,7 @@ void Game_Render()
             }
             break;
         case STATE_GAME_OVER:
-            assert(0 && "GAME OVER!! - not implemented yet");
+            //assert(0 && "GAME OVER!! - not implemented yet");
             break;
 
     }
